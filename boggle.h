@@ -12,6 +12,13 @@
 #include <iostream>
 #include <utility>
 
+using std::istream;
+using std::vector;
+using std::set;
+using std::string;
+using std::pair;
+
+
 // reads the first 16 non-whitespace characters in a file opened
 // by the filestream and returns a 4 x 4 vector of chars that are
 // placed into the array in row-major order, so 
