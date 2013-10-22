@@ -4,7 +4,8 @@
 #ifndef BOGGLE_H
 #define BOGGLE_H
 
-#include "dic.h"
+//#include "dic.h"
+#include "dictionary.h"
 #include <string>
 #include <set>
 #include <vector>
@@ -38,6 +39,7 @@ void dfs_boggle(set<string>& solutions,
                 pair<int,int> indices,
                 string prefix,
                 vector< vector<bool> >& visited, 
-                Dictionary& dictionary);
+                //Dictionary& dictionary);
+                DictionaryInterface& dictionary);
 
 #endif

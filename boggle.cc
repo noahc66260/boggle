@@ -62,7 +62,8 @@ void dfs_boggle(set<string>& solutions,
                 pair<int,int> indices,
                 string prefix,
                 vector< vector<bool> >& visited, 
-                Dictionary& dictionary)
+                //Dictionary& dictionary)
+                DictionaryInterface& dictionary)
 {
   if (!dictionary.isPrefix(prefix))
     return;

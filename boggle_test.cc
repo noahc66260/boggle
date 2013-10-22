@@ -2,7 +2,9 @@
 // Tests the Dictionary class from dic.h and boggle functions from boggle.h
 
 #include "boggle.h"
-#include "dic.h"
+//#include "dic.h"
+#include "dictionary.h"
+#include "hash_dictionary.h"
 #include <gtest/gtest.h>
 #include <fstream>
 #include <cctype>
@@ -18,6 +20,7 @@
 #define COLS 4
 
 using namespace std;
+//typedef Dictionary HashDictionary; // a quick hack
 
 const string alphabet = "abcdefghijklmnopqrstuvwxyz"; // for random letters
 
@@ -49,13 +52,13 @@ TEST(validIndexTest, goodValues) {
 // constructing/deconstructing our dictionary
 TEST(initializeDic, noSegFault) {
   string file = "/usr/share/dict/words";
-  Dictionary d = Dictionary(file);
+  HashDictionary d = HashDictionary(file);
 }
 
 // This is an exhaustive test on the words from /usr/share/dict/words
 TEST(isWordTest, inDictionary) {
   string file = "/usr/share/dict/words";
-  Dictionary d = Dictionary(file);
+  HashDictionary d = HashDictionary(file);
   ifstream ifs(file.c_str());
   string word;
   bool validWord;
@@ -80,7 +83,7 @@ TEST(isWordTest, caseInsensitive) {
   string file = "/usr/share/dict/words";
   ifstream ifs(file.c_str());
 
-  Dictionary d = Dictionary(file);
+  HashDictionary d = HashDictionary(file);
   string word;
   while (ifs.good())
   {
@@ -105,7 +108,7 @@ TEST(isWordTest, caseInsensitive) {
 // in the set then it should not be in the dictionary and hence
 // we can expect not to find it.
 TEST(isWordTest, notInDictionary) {
-  Dictionary d = Dictionary("/usr/share/dict/words");
+  HashDictionary d = HashDictionary("/usr/share/dict/words");
   set<string> d_copy = set<string>();
   string word;
   bool validWord;
@@ -150,7 +153,7 @@ TEST(isWordTest, notInDictionary) {
 // If said token is not a contained in our set, it should not
 // be a prefix in our dictionary taken from the same file.
 TEST(isPrefixTest, invalidPrefixes) {
-  Dictionary d = Dictionary("/usr/share/dict/words");
+  HashDictionary d = HashDictionary("/usr/share/dict/words");
   set<string> prefixes = set<string>();
   string word;
   bool validWord;
@@ -194,7 +197,7 @@ TEST(isPrefixTest, invalidPrefixes) {
 // word in our dictionary should also be a prefix in our dictionary
 TEST(isPrefixTest, allWordsArePrefixes) {
   string file = "/usr/share/dict/words";
-  Dictionary d = Dictionary(file);
+  HashDictionary d = HashDictionary(file);
   ifstream ifs(file.c_str());
   string word;
   while (ifs.good())
@@ -211,7 +214,7 @@ TEST(isPrefixTest, allWordsArePrefixes) {
 // of random length per word rather than all prefix substrings.
 TEST(isPrefixTest, validPrefixes) {
   string file = "/usr/share/dict/words";
-  Dictionary d = Dictionary(file);
+  HashDictionary d = HashDictionary(file);
   ifstream ifs(file.c_str());
   string word;
   bool validWord;
@@ -245,7 +248,7 @@ TEST(isPrefixTest, caseInsensitive) {
   string file = "/usr/share/dict/words";
   ifstream ifs(file.c_str());
 
-  Dictionary d = Dictionary(file);
+  HashDictionary d = HashDictionary(file);
   string prefix;
   while (ifs.good())
   {
@@ -268,8 +271,8 @@ TEST(isPrefixTest, caseInsensitive) {
 // /home/noah/Documents/foo/doubleWords was created by concatenating
 // two copies of /usr/share/dict/words.
 TEST(addWordTest, noDuplicates) {
-  Dictionary d1 = Dictionary("/usr/share/dict/words");
-  Dictionary d2 = Dictionary("/home/noah/Documents/foo/doubleWords");
+  HashDictionary d1 = HashDictionary("/usr/share/dict/words");
+  HashDictionary d2 = HashDictionary("/home/noah/Documents/foo/doubleWords");
   int s1 = d1.size();
   int s2 = d2.size();
 
@@ -283,7 +286,7 @@ TEST(addWordTest, noDuplicates) {
 //    sort vwoolf2.txt | uniq | sed '/^$/d' | wc -l
 // Here vwoolf2.txt has no punctuation.
 TEST(sizeTest, virginiaWoolf) {
-  Dictionary d = Dictionary("/home/noah/Documents/foo/vwoolf2.txt");
+  HashDictionary d = HashDictionary("/home/noah/Documents/foo/vwoolf2.txt");
   EXPECT_EQ(d.size(), 337);
 }
 
@@ -317,7 +320,7 @@ TEST(sizeTest, randomWords) {
       ofs << *iter << endl;
     }
     ofs.close();
-    Dictionary d = Dictionary(file);
+    HashDictionary d = HashDictionary(file);
     EXPECT_EQ(d.size(), words.size());
   }
 }
@@ -328,14 +331,14 @@ TEST(sizeTest, emptyFile) {
   char file[15];
   tmpnam(file); 
 
-  Dictionary d = Dictionary(file);
+  HashDictionary d = HashDictionary(file);
   EXPECT_EQ(d.size(), 0);
 }
 
 // We test dfs_boggle() by creating a random boggle board and
 // checking that each solution is a valid word in our dictionary.
 TEST(dfsBoggleTest, solutionsAreValid) {
-  Dictionary dictionary = Dictionary("/usr/share/dict/words");
+  HashDictionary dictionary = HashDictionary("/usr/share/dict/words");
   set<string> valid_words = set<string>();
 
   vector< vector<char> > game = 
@@ -422,7 +425,7 @@ TEST(dfsBoggleTest, caseInsensitiveBoard) {
 
   vector< vector<bool> > visited = 
     vector< vector<bool> >(ROWS, vector<bool>(COLS, false));
-  Dictionary d = Dictionary("/usr/share/dict/words");
+  HashDictionary d = HashDictionary("/usr/share/dict/words");
   set<string> solutions;
 
   for (int i = 0; i < ROWS; i++)

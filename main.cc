@@ -5,7 +5,8 @@
 
 #include "boggle.h"
 #include <string>
-#include "dic.h"
+//#include "dic.h"
+#include "hash_dictionary.h"
 #include <iostream>
 #include <vector>
 #include <set>
@@ -39,7 +40,8 @@ int main(int argc, char **argv)
   vector< vector<bool> > visited = 
     vector< vector<bool> >(ROWS, vector<bool>(COLS, false));
   set<string> solutions = set<string>();
-  Dictionary dictionary = Dictionary();
+  //Dictionary dictionary = Dictionary();
+  HashDictionary dictionary = HashDictionary();
  
   for (int i = 0; i < ROWS; i++)
     for (int j = 0; j < COLS; j++)
