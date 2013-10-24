@@ -4,14 +4,14 @@
 #include <algorithm>
 #include <new>
 
-const string Trie::valid_characters = "abcdefghijklmnopqrstuvwxyz";
+const string Trie::valid_characters_ = "abcdefghijklmnopqrstuvwxyz";
 
 Trie::Trie()
 {
   c_ = '\0';
   words_ = 0;
   prefixes_ = 0;
-  edges_ = vector< Trie* >(valid_characters.length(), NULL);
+  edges_ = vector< Trie* >(valid_characters_.length(), NULL);
 }
 
 Trie::Trie(char c)
@@ -19,7 +19,7 @@ Trie::Trie(char c)
   c_ = c;
   words_ = 0;
   prefixes_ = 0;
-  edges_ = vector< Trie* >(valid_characters.length(), NULL);
+  edges_ = vector< Trie* >(valid_characters_.length(), NULL);
 }
 
 Trie::~Trie()
@@ -83,7 +83,7 @@ int Trie::countPrefixes(const string &s)
 
 int Trie::index(char c)
 {
-  size_t index = valid_characters.find(c);
+  size_t index = valid_characters_.find(c);
   if (index == string::npos)
     return -1;
   else

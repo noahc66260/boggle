@@ -30,7 +30,7 @@ class Trie
     int words_;
     int prefixes_;
     vector< Trie* > edges_; // later make array implementation
-    static const string valid_characters;
+    static const string valid_characters_;
 };
 
 #endif // HOME_DOCUMENTS_FOO_TRIE_H
