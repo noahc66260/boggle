@@ -7,6 +7,7 @@
 #include <string>
 //#include "dic.h"
 #include "hash_dictionary.h"
+#include "trie_dictionary.h"
 #include <iostream>
 #include <vector>
 #include <set>
@@ -41,7 +42,8 @@ int main(int argc, char **argv)
     vector< vector<bool> >(ROWS, vector<bool>(COLS, false));
   set<string> solutions = set<string>();
   //Dictionary dictionary = Dictionary();
-  HashDictionary dictionary = HashDictionary();
+  //HashDictionary dictionary = HashDictionary();
+  TrieDictionary dictionary = TrieDictionary();
 
   string s = "";
   for (int i = 0; i < ROWS; i++)
