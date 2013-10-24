@@ -9,8 +9,6 @@
 #ifndef HOME_DOCUMENTS_FOO_TRIE_H
 #define HOME_DOCUMENTS_FOO_TRIE_H
 
-//#include "node.h" // tries are recursive. No nodes. 
-
 #include <string>
 #include <vector>
 
@@ -32,6 +30,7 @@ class Trie
     int words_;
     int prefixes_;
     vector< Trie* > edges_; // later make array implementation
+    static const string valid_characters;
 };
 
 #endif // HOME_DOCUMENTS_FOO_TRIE_H
