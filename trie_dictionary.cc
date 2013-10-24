@@ -30,6 +30,7 @@ TrieDictionary::~TrieDictionary()
 
 bool TrieDictionary::isWord(string s)
 {
+  // try out set next
   transform(s.begin(), s.end(), s.begin(), ::tolower);
   if (!validWord(s)) {
     return false;
@@ -61,15 +62,12 @@ void TrieDictionary::init(string file)
   string word;
 
   // we want to avoid inserting an empty string
-  ifs >> word;
-  while (ifs.good())
-  {
-    //ifs >> word;
+  while (ifs.good()) {
+    ifs >> word;
     transform(word.begin(), word.end(), word.begin(), ::tolower);
-    if (validWord(word)) {
+    if (validWord(word)) { // && !word.empty()) { // somehow not required
       addWord(word);
     }
-    ifs >> word;
   }
   ifs.close();
 }
@@ -86,12 +84,6 @@ bool TrieDictionary::validWord(string s)
 
 void TrieDictionary::addWord(string s)
 {
-  // unfortunately, checking if the word already exists nearly 
-  // doubles the running time. Perhaps there's another way to 
-  // count the number of unique_words.
-  if (!isWord(s)) {
-    unique_words++;
-  }
-  head.addWord(s);
+  unique_words = (head.addWord(s) > 1) ? unique_words : unique_words + 1;
 }
 

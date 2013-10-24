@@ -31,10 +31,12 @@ Trie::~Trie()
   }
 }
 
-void Trie::addWord(const string& s)
+//void Trie::addWord(const string& s)
+int Trie::addWord(const string& s)
 {
   if (s.empty()) {
     words++;
+    return words;
   } else {
     prefixes++;
     char k = s[0];
@@ -43,7 +45,7 @@ void Trie::addWord(const string& s)
     }
     string n = s.substr(1, s.length() - 1);
     Trie * r = edges[index(k)];
-    r->addWord(n);
+    return r->addWord(n);
   }
 }
 

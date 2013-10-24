@@ -23,7 +23,7 @@ class Trie
     Trie();
     Trie(char c);
     ~Trie();
-    void addWord(const string& s); // later make char * implementation
+    int addWord(const string& s); // later make char * implementation
     int countWords(const string& s);
     int countPrefixes(const string& s);
   private:
