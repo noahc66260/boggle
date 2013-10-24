@@ -44,9 +44,8 @@ bool valid_index(int rows, int cols, int i, int j);
 void dfs_boggle(set<string>& solutions,
                 vector< vector<char> >& game, 
                 pair<int,int> indices,
-                string prefix,
+                string& prefix,
                 vector< vector<bool> >& visited, 
-                //Dictionary& dictionary);
                 DictionaryInterface& dictionary);
 
 #endif

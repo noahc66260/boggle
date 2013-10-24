@@ -42,12 +42,13 @@ int main(int argc, char **argv)
   set<string> solutions = set<string>();
   //Dictionary dictionary = Dictionary();
   HashDictionary dictionary = HashDictionary();
- 
+
+  string s = "";
   for (int i = 0; i < ROWS; i++)
     for (int j = 0; j < COLS; j++)
     {
       pair<int, int> indices = pair<int, int>(i, j);
-      dfs_boggle(solutions, game, indices, "", visited, dictionary);
+      dfs_boggle(solutions, game, indices, s, visited, dictionary);
     }
 
   set<string>::iterator i;

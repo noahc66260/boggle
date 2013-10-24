@@ -60,9 +60,8 @@ bool valid_index(int rows, int cols, int i, int j)
 void dfs_boggle(set<string>& solutions,
                 vector< vector<char> >& game, 
                 pair<int,int> indices,
-                string prefix,
+                string& prefix,
                 vector< vector<bool> >& visited, 
-                //Dictionary& dictionary)
                 DictionaryInterface& dictionary)
 {
   if (!dictionary.isPrefix(prefix))
@@ -84,6 +83,8 @@ void dfs_boggle(set<string>& solutions,
         indices = pair<int,int>(k, l);
         dfs_boggle(solutions, game, indices, prefix, visited, dictionary);
       }
+  //prefix.pop_back(); // might be C++11 feature
+  prefix = prefix.substr(0, prefix.length()-1);
   visited[i][j] = false;
 }
 
