@@ -28,10 +28,10 @@ class Trie
     int countPrefixes(const string& s);
   private:
     int index(char c);
-    char c;
-    int words;
-    int prefixes;
-    vector< Trie* > edges; // later make array implementation
+    char c_;
+    int words_;
+    int prefixes_;
+    vector< Trie* > edges_; // later make array implementation
 };
 
 #endif // HOME_DOCUMENTS_FOO_TRIE_H

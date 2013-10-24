@@ -34,17 +34,17 @@ class TrieDictionary : public DictionaryInterface
 {
   public:
     TrieDictionary();
-    TrieDictionary(string file);  // later change it
+    TrieDictionary(const string& file);  // later change it
     ~TrieDictionary() {}
     bool isWord(string s);
     bool isPrefix(string s);
     int size();
   private:
-    void init(string file);
-    bool validWord(string s);
-    void addWord(string s);
-    Trie head;
-    int unique_words;
+    void init(const string& file);
+    bool validWord(const string& s);
+    void addWord(const string& s);
+    Trie head_;
+    int unique_words_;
 };
 
 #endif // HOME_DOCUMENTS_FOO_TRIE_DICTIONARY_H

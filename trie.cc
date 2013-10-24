@@ -8,25 +8,25 @@ using namespace std;
 
 Trie::Trie()
 {
-  this->c = '\0';
-  words = 0;
-  prefixes = 0;
-  edges = vector< Trie* >(26, NULL);
+  c_ = '\0';
+  words_ = 0;
+  prefixes_ = 0;
+  edges_ = vector< Trie* >(26, NULL);
 }
 
 Trie::Trie(char c)
 {
-  this->c = c;
-  words = 0;
-  prefixes = 0;
-  edges = vector< Trie* >(26, NULL);
+  c_ = c;
+  words_ = 0;
+  prefixes_ = 0;
+  edges_ = vector< Trie* >(26, NULL);
 }
 
 Trie::~Trie()
 {
-  for (unsigned i = 0; i < edges.size(); ++i) {
-    if (edges[i]) {
-      delete edges[i];
+  for (unsigned i = 0; i < edges_.size(); ++i) {
+    if (edges_[i]) {
+      delete edges_[i];
     }
   }
 }
@@ -35,16 +35,16 @@ Trie::~Trie()
 int Trie::addWord(const string& s)
 {
   if (s.empty()) {
-    words++;
-    return words;
+    words_++;
+    return words_;
   } else {
-    prefixes++;
+    prefixes_++;
     char k = s[0];
-    if (!edges[index(k)]) {
-      edges[index(k)] = new Trie(k);
+    if (!edges_[index(k)]) {
+      edges_[index(k)] = new Trie(k);
     }
     string n = s.substr(1, s.length() - 1);
-    Trie * r = edges[index(k)];
+    Trie * r = edges_[index(k)];
     return r->addWord(n);
   }
 }
@@ -52,11 +52,11 @@ int Trie::addWord(const string& s)
 int Trie::countWords(const string& s)
 {
   if (s.empty()) {
-    return words;
+    return words_;
   } else {
     char k = s[0];
     string n = s.substr(1, s.length() - 1);
-    Trie * r = edges[index(k)];
+    Trie * r = edges_[index(k)];
     if (r) {
       return r->countWords(n);
     } else {
@@ -68,11 +68,11 @@ int Trie::countWords(const string& s)
 int Trie::countPrefixes(const string &s)
 {
   if (s.empty()) {
-    return prefixes;
+    return prefixes_;
   } else {
     char k = s[0];
     string n = s.substr(1, s.length() - 1);
-    Trie * r = edges[index(k)];
+    Trie * r = edges_[index(k)];
     if (r) {
       return r->countPrefixes(n);
     } else {
