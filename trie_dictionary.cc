@@ -7,7 +7,6 @@
 #include <algorithm>
 #include <fstream>
 
-using namespace std; // later phase out
 
 TrieDictionary::TrieDictionary()
 {
@@ -19,19 +18,9 @@ TrieDictionary::TrieDictionary(const string& file)
   init(file);
 }
 
-/*
-
-TrieDictionary::~TrieDictionary()
-{
-
-}
-
-*/
-
 bool TrieDictionary::isWord(string s) 
 {
-  // try out set next
-  transform(s.begin(), s.end(), s.begin(), ::tolower);
+  std::transform(s.begin(), s.end(), s.begin(), ::tolower);
   if (!validWord(s)) {
     return false;
   } else {
@@ -41,7 +30,10 @@ bool TrieDictionary::isWord(string s)
 
 bool TrieDictionary::isPrefix(string s)
 {
-  transform(s.begin(), s.end(), s.begin(), ::tolower);
+  if (s.empty()) {
+    return true;
+  }
+  std::transform(s.begin(), s.end(), s.begin(), ::tolower);
   if (!validWord(s)) {
     return false;
   } else {
@@ -58,14 +50,14 @@ void TrieDictionary::init(const string& file)
 {
   unique_words_ = 0;
   head_ = Trie('\0'); 
-  ifstream ifs(file.c_str());
+  std::ifstream ifs(file.c_str());
   string word;
 
   // we want to avoid inserting an empty string
   while (ifs.good()) {
     ifs >> word;
-    transform(word.begin(), word.end(), word.begin(), ::tolower);
-    if (validWord(word)) { // && !word.empty()) { // somehow not required
+    std::transform(word.begin(), word.end(), word.begin(), ::tolower);
+    if (validWord(word)) { 
       addWord(word);
     }
   }
@@ -74,6 +66,10 @@ void TrieDictionary::init(const string& file)
 
 bool TrieDictionary::validWord(const string& s)
 {
+  if (s.empty()) {
+    return false;
+  }
+  using std::isalpha; 
   for (unsigned i = 0; i < s.length(); ++i) {
     if (!isalpha(s[i])) {
       return false;
