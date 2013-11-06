@@ -5,6 +5,8 @@
 //#include "dic.h"
 #include "dictionary.h"
 #include "hash_dictionary.h"
+#include "trie_dictionary.h"
+#include "boggle_board.h"
 #include <gtest/gtest.h>
 #include <fstream>
 #include <cctype>
@@ -15,12 +17,12 @@
 #include <exception>
 #include <stdexcept>
 #include <utility>
+#include <iostream>
 
 #define ROWS 4
 #define COLS 4
 
 using namespace std;
-//typedef Dictionary HashDictionary; // a quick hack
 
 const string alphabet = "abcdefghijklmnopqrstuvwxyz"; // for random letters
 
@@ -52,13 +54,13 @@ TEST(validIndexTest, goodValues) {
 // constructing/deconstructing our dictionary
 TEST(initializeDic, noSegFault) {
   string file = "/usr/share/dict/words";
-  HashDictionary d = HashDictionary(file);
+  TrieDictionary d = TrieDictionary(file);
 }
 
 // This is an exhaustive test on the words from /usr/share/dict/words
 TEST(isWordTest, inDictionary) {
   string file = "/usr/share/dict/words";
-  HashDictionary d = HashDictionary(file);
+  TrieDictionary d = TrieDictionary(file);
   ifstream ifs(file.c_str());
   string word;
   bool validWord;
@@ -83,7 +85,7 @@ TEST(isWordTest, caseInsensitive) {
   string file = "/usr/share/dict/words";
   ifstream ifs(file.c_str());
 
-  HashDictionary d = HashDictionary(file);
+  TrieDictionary d = TrieDictionary(file);
   string word;
   while (ifs.good())
   {
@@ -108,7 +110,7 @@ TEST(isWordTest, caseInsensitive) {
 // in the set then it should not be in the dictionary and hence
 // we can expect not to find it.
 TEST(isWordTest, notInDictionary) {
-  HashDictionary d = HashDictionary("/usr/share/dict/words");
+  TrieDictionary d = TrieDictionary("/usr/share/dict/words");
   set<string> d_copy = set<string>();
   string word;
   bool validWord;
@@ -153,7 +155,7 @@ TEST(isWordTest, notInDictionary) {
 // If said token is not a contained in our set, it should not
 // be a prefix in our dictionary taken from the same file.
 TEST(isPrefixTest, invalidPrefixes) {
-  HashDictionary d = HashDictionary("/usr/share/dict/words");
+  TrieDictionary d = TrieDictionary("/usr/share/dict/words");
   set<string> prefixes = set<string>();
   string word;
   bool validWord;
@@ -193,11 +195,13 @@ TEST(isPrefixTest, invalidPrefixes) {
   }
 }
 
+/*
+// NOTE: prefix means proper prefix
 // A word is trivially a prefix of itself, so every token which is a 
 // word in our dictionary should also be a prefix in our dictionary
 TEST(isPrefixTest, allWordsArePrefixes) {
   string file = "/usr/share/dict/words";
-  HashDictionary d = HashDictionary(file);
+  TrieDictionary d = TrieDictionary(file);
   ifstream ifs(file.c_str());
   string word;
   while (ifs.good())
@@ -208,13 +212,15 @@ TEST(isPrefixTest, allWordsArePrefixes) {
       EXPECT_TRUE(d.isPrefix(word));
   }
 }
+*/
 
+// Note: all prefixes are *proper* prefixes
 // This is an exhaustive test on the words from /usr/share/dict/words.
 // If this takes too long you may modify it to check one prefix substring
 // of random length per word rather than all prefix substrings.
 TEST(isPrefixTest, validPrefixes) {
   string file = "/usr/share/dict/words";
-  HashDictionary d = HashDictionary(file);
+  TrieDictionary d = TrieDictionary(file);
   ifstream ifs(file.c_str());
   string word;
   bool validWord;
@@ -229,7 +235,7 @@ TEST(isPrefixTest, validPrefixes) {
     transform(word.begin(), word.end(), word.begin(), ::tolower);
     if (validWord)
     {
-      for (int i = word.length(); 0 < i; i--)
+      for (int i = word.length() - 1; 0 < i; i--)
       {
         word = word.substr(0, i);
         EXPECT_TRUE(d.isPrefix(word));
@@ -248,7 +254,7 @@ TEST(isPrefixTest, caseInsensitive) {
   string file = "/usr/share/dict/words";
   ifstream ifs(file.c_str());
 
-  HashDictionary d = HashDictionary(file);
+  TrieDictionary d = TrieDictionary(file);
   string prefix;
   while (ifs.good())
   {
@@ -271,8 +277,8 @@ TEST(isPrefixTest, caseInsensitive) {
 // /home/noah/Documents/foo/doubleWords was created by concatenating
 // two copies of /usr/share/dict/words.
 TEST(addWordTest, noDuplicates) {
-  HashDictionary d1 = HashDictionary("/usr/share/dict/words");
-  HashDictionary d2 = HashDictionary("/home/noah/Documents/foo/doubleWords");
+  TrieDictionary d1 = TrieDictionary("/usr/share/dict/words");
+  TrieDictionary d2 = TrieDictionary("/home/noah/Documents/foo/doubleWords");
   int s1 = d1.size();
   int s2 = d2.size();
 
@@ -286,7 +292,7 @@ TEST(addWordTest, noDuplicates) {
 //    sort vwoolf2.txt | uniq | sed '/^$/d' | wc -l
 // Here vwoolf2.txt has no punctuation.
 TEST(sizeTest, virginiaWoolf) {
-  HashDictionary d = HashDictionary("/home/noah/Documents/foo/vwoolf2.txt");
+  TrieDictionary d = TrieDictionary("/home/noah/Documents/foo/vwoolf2.txt");
   EXPECT_EQ(d.size(), 337);
 }
 
@@ -295,32 +301,32 @@ TEST(sizeTest, virginiaWoolf) {
 // our Dictionary class and compare the size of the dictionary with
 // the size of the STL set used the create the file.
 TEST(sizeTest, randomWords) {
-  char file[15];
-  tmpnam(file); 
+  char file[] = "/tmp/fileXXXXXX";
+  mkstemp(file);
 
   string word;
   for (int i = 0; i < 50; i++)
   {
     int n_words = rand() % 10000 + 1;
     set<string> words;
-    while (words.size() < n_words)
-    {
+    while (words.size() < n_words) {
       string word;
       int word_length = rand() % 20 + 1;
-      for (int j = 0; j < word_length; j++)
+      for (int j = 0; j < word_length; ++j) {
         word += alphabet[rand() % 26]; 
-      if (words.count(word) == 0) 
+      }
+      if (!words.count(word)) {
         words.insert(word);
+      }
     }
 
     ofstream ofs(file);
     set<string>::iterator iter;
-    for (iter = words.begin(); iter != words.end(); iter++)
-    {
+    for (iter = words.begin(); iter != words.end(); ++iter) {
       ofs << *iter << endl;
     }
     ofs.close();
-    HashDictionary d = HashDictionary(file);
+    TrieDictionary d = TrieDictionary(file);
     EXPECT_EQ(d.size(), words.size());
   }
 }
@@ -328,17 +334,17 @@ TEST(sizeTest, randomWords) {
 // If use an empty file for our Dictionary object then we should
 // have a dictionary of size 0.
 TEST(sizeTest, emptyFile) {
-  char file[15];
-  tmpnam(file); 
+  char file[] = "/tmp/fileXXXXXX";
+  mkstemp(file);
 
-  HashDictionary d = HashDictionary(file);
+  TrieDictionary d = TrieDictionary(file);
   EXPECT_EQ(d.size(), 0);
 }
 
 // We test dfs_boggle() by creating a random boggle board and
 // checking that each solution is a valid word in our dictionary.
 TEST(dfsBoggleTest, solutionsAreValid) {
-  HashDictionary dictionary = HashDictionary("/usr/share/dict/words");
+  TrieDictionary dictionary = TrieDictionary("/usr/share/dict/words");
   set<string> valid_words = set<string>();
 
   vector< vector<char> > game = 
@@ -352,12 +358,13 @@ TEST(dfsBoggleTest, solutionsAreValid) {
     for (int i = 0; i < ROWS; i++)
       for (int j = 0; j < COLS; j++)
         game[i][j] = alphabet[rand() % 26]; 
-  
+ 
+    string s = "";
     for (int i = 0; i < ROWS; i++)
       for (int j = 0; j < COLS; j++)
       {
         indices = pair<int, int>(i, j);
-        dfs_boggle(valid_words, game, indices, "", visited, dictionary);
+        dfs_boggle(valid_words, game, indices, s, visited, dictionary);
       }
 
     set<string>::iterator i;
@@ -372,11 +379,11 @@ TEST(dfsBoggleTest, solutionsAreValid) {
 // Next we call readBoard() and store the return value in the second
 // board object. Finally we compare the values in the indices of each
 // board, which should be equal. We repeat this 1000 times.
-TEST(readBoard, readsCorrectly) {
-  vector< vector<char> > b1 = vector< vector<char> >(ROWS, vector<char>(COLS));
+TEST(BoggleBoard, readFromFile) {
+  char b1[ROWS][COLS];
 
-  char file[15];
-  tmpnam(file); // creates temporary file
+  char file[] = "/tmp/fileXXXXXX";
+  mkstemp(file);
   ofstream ofs;
   ifstream ifs;
 
@@ -396,12 +403,13 @@ TEST(readBoard, readsCorrectly) {
     }
     ofs.close();
     ifs.open(file);
-    vector< vector<char> > b2 = readBoard(ifs);
+    BoggleBoard b2 = BoggleBoard();
+    b2.readFromFile(ifs);
     ifs.close();
 
     for (int i = 0; i < ROWS; i++)
       for (int j = 0; j < COLS; j++)
-        EXPECT_EQ(b1[i][j], b2[i][j]);
+        EXPECT_EQ(b1[i][j], b2.at(i,j));
   }
 }
 
@@ -425,12 +433,13 @@ TEST(dfsBoggleTest, caseInsensitiveBoard) {
 
   vector< vector<bool> > visited = 
     vector< vector<bool> >(ROWS, vector<bool>(COLS, false));
-  HashDictionary d = HashDictionary("/usr/share/dict/words");
+  TrieDictionary d = TrieDictionary("/usr/share/dict/words");
   set<string> solutions;
 
+  string s = "";
   for (int i = 0; i < ROWS; i++)
     for (int j = 0; j < COLS; j++)
-      dfs_boggle(solutions, board, pair<int, int>(i,j), "", visited, d);
+      dfs_boggle(solutions, board, pair<int, int>(i,j), s, visited, d);
 
   int n_solutions = solutions.size();
   solutions.clear();
@@ -450,7 +459,7 @@ TEST(dfsBoggleTest, caseInsensitiveBoard) {
       }
     for (int i = 0; i < ROWS; i++)
       for (int j = 0; j < COLS; j++)
-        dfs_boggle(solutions, board, pair<int, int>(i,j), "", visited, d);
+        dfs_boggle(solutions, board, pair<int, int>(i,j), s, visited, d);
     EXPECT_EQ(solutions.size(), n_solutions);
     solutions.clear();
   }
@@ -484,7 +493,7 @@ TEST(dfsBoggleTest, caseInsensitiveBoard) {
         board[i][j] = letters[j + ROWS*i]; 
     for (int i = 0; i < ROWS; i++)
       for (int j = 0; j < COLS; j++)
-        dfs_boggle(solutions, board, pair<int, int>(i,j), "", visited, d);
+        dfs_boggle(solutions, board, pair<int, int>(i,j), s, visited, d);
     EXPECT_EQ(solutions.size(), n_solutions);
     solutions.clear();
   }
@@ -495,8 +504,8 @@ TEST(dfsBoggleTest, caseInsensitiveBoard) {
 // non-alphabetic character and call the readBoard() function.
 // We check to see that an exception was raised by the bad input.
 TEST(readBoard, nonAlphabeticInput) {
-  char file[15];
-  tmpnam(file); // creates temporary file
+  char file[] = "/tmp/fileXXXXXX";
+  mkstemp(file);
   ofstream ofs;
   ifstream ifs;
   string bad_characters = "1234567890?./!@$%^&*()-[];,+=):";
@@ -529,8 +538,8 @@ TEST(readBoard, nonAlphabeticInput) {
 // with too few characters to make a boggle board. This test
 // checks that the ios_base::failure exception is thrown.
 TEST(readBoard, prematureEOF) {
-  char file[15];
-  tmpnam(file); // creates temporary file
+  char file[] = "/tmp/fileXXXXXX";
+  mkstemp(file);
   ofstream ofs;
   ifstream ifs;
   bool caught;
