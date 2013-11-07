@@ -11,9 +11,10 @@
 #include <vector>
 #include "dictionary.h"
 
-using namespace std;
 using std::set;
+using std::vector;
 using std::string;
+using std::pair;
 
 class BoggleSolver
 {
@@ -23,15 +24,14 @@ class BoggleSolver
     void setDictionary(DictionaryInterface& dictionary);
     set<string> solve(BoggleBoard& board);
   private:
-    DictionaryInterface* dictionary_;
+    DictionaryInterface* pdictionary_;
     bool valid_index(int rows, int cols, int i, int j);
 
-    void dfs_boggle(set<string>& solutions,
-                BoggleBoard& board, 
+    void dfs_boggle(BoggleBoard& board, 
                 pair<int,int> indices,
                 string& prefix,
-                vector< vector<bool> >& visited, 
-                DictionaryInterface& dictionary);
+                vector< vector<bool> >& visited,
+                set<string>* psolutions);
 };
 
 
