@@ -10,19 +10,10 @@
 #include "trie_dictionary.h"
 #include <utility>
 
-/*
-BoggleSolver::BoggleSolver()
+void BoggleSolver::setDictionary(DictionaryInterface& dictionary)
 {
-  dictionary_type_ = "trie";
-  initializeDictionary("/usr/share/dict/words");
+  dictionary_ = &dictionary;
 }
-
-bool BoggleSolver::selectDictionary(string type, 
-                                    string file=string("/usr/share/dict/words"))
-{
-  dictionary_type_ = type;
-}
-*/
 
 // no need for using directives since .h file has it
 set<string> BoggleSolver::solve(BoggleBoard& board)
@@ -38,14 +29,14 @@ set<string> BoggleSolver::solve(BoggleBoard& board)
   set<string> solutions = set<string>();
 
   //HashDictionary dictionary = HashDictionary();
-  TrieDictionary dictionary = TrieDictionary();
+  //TrieDictionary dictionary = TrieDictionary();
 
   string s = "";
   for (int i = 0; i < rows; i++)
     for (int j = 0; j < cols; j++)
     {
       pair<int, int> indices = pair<int, int>(i, j);
-      dfs_boggle(solutions, board, indices, s, visited, dictionary);
+      dfs_boggle(solutions, board, indices, s, visited, *dictionary_);
     }
   return solutions; 
 }

@@ -20,18 +20,10 @@ class BoggleSolver
   public:
     BoggleSolver() {};
     ~BoggleSolver() {};
-    /*
-    bool selectDictionary(string type, 
-                          string file = string("/usr/share/dict/words"));
-    string dictionaryType() {return dictionary_type_;}
-    */
+    void setDictionary(DictionaryInterface& dictionary);
     set<string> solve(BoggleBoard& board);
   private:
-    /*
-    string dictionary_type_;
-    Dictionary dictionary_;
-    void initializeDictionary(string file);
-    */
+    DictionaryInterface* dictionary_;
     bool valid_index(int rows, int cols, int i, int j);
 
     void dfs_boggle(set<string>& solutions,
