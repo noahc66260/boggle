@@ -24,7 +24,6 @@
 // to do list:
 // 1. I need to decide if i want to pass in the boggle board through
 //    standard input only.
-// 2. Change readFromFile() to readFromStream()
 // 3. Apparently my code doesn't break when I designate a board larger
 //    than characters available and it's possible that it's putting in
 //    empty characters such that it would add erroneous solutions 
@@ -122,15 +121,15 @@ int main(int argc, char **argv)
   if (optind < argc)
   {
     ifstream ifs(argv[optind]);
-    board.readFromFile(ifs);
+    board.readFromStream(ifs);
     ifs.close();
   }
   else {
-    board.readFromFile(cin);
+    board.readFromStream(cin);
   }
   */
 
-  board.readFromFile(cin);
+  board.readFromStream(cin);
 
   BoggleSolver solver = BoggleSolver();
   TrieDictionary dictionary = TrieDictionary(file);

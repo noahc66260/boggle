@@ -21,7 +21,7 @@ BoggleBoard::BoggleBoard(int rows, int cols)
 // does not close the stream
 // stores data in row major order
 // does not validate the board
-bool BoggleBoard::readFromFile(istream& is)
+bool BoggleBoard::readFromStream(istream& is)
 {
   for (int i = 0; i < rows_; ++i) {
     for (int j = 0; j < cols_; ++j) {

@@ -18,7 +18,8 @@ class BoggleBoard
     ~BoggleBoard() {};
     int rows() const {return rows_;}
     int cols() const {return cols_;}
-    bool readFromFile(istream& is); // does not close file
+    // this function should be readFromStream(), not readFromFile()
+    bool readFromStream(istream& is); // does not close file
     // should i bother overloading [][]?
     char& at(int i, int j);
     const char& at(int i, int j) const; // the need for this confuses me
