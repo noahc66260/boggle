@@ -25,10 +25,9 @@ bool BoggleBoard::readFromStream(istream& is)
 {
   for (int i = 0; i < rows_; ++i) {
     for (int j = 0; j < cols_; ++j) {
-      if (!is.good()) {
-        return false;
+      if (!(is >> board_[i][j])) {
+        return false;  
       }
-      is >> board_[i][j]; // or board_.at(i).at(j);
     }
   }
   return true;
