@@ -1,12 +1,15 @@
 // boggle_test.cpp
 // Tests the Dictionary class from dic.h and boggle functions from boggle.h
+//
+// 1. I need to add functions to verify parsing in boggle.h and boggle.cc
+// 2. Also... you need to check the at() function for BoggleBoard class
 
 #include "boggle.h"
-//#include "dic.h"
 #include "dictionary.h"
 #include "hash_dictionary.h"
 #include "trie_dictionary.h"
 #include "boggle_board.h"
+#include "boggle_solver.h"
 #include <gtest/gtest.h>
 #include <fstream>
 #include <cctype>
@@ -24,8 +27,11 @@
 
 using namespace std;
 
+// 1. add tests for BoggleSolver, alter tests for dfs_boggle
+
 const string alphabet = "abcdefghijklmnopqrstuvwxyz"; // for random letters
 
+/*
 // Tests that the validIndex() function returns false for indices
 // that do not correspond to entries in a ROWS x COLS matrix
 TEST(validIndexTest, badValues) {
@@ -49,6 +55,7 @@ TEST(validIndexTest, goodValues) {
     for (int j = 0; j < COLS; j++)
       EXPECT_TRUE(valid_index(ROWS, COLS, i,  j));
 }
+*/
 
 // If memory is not managed correctly, we may seg fault just
 // constructing/deconstructing our dictionary
@@ -344,32 +351,29 @@ TEST(sizeTest, emptyFile) {
 // We test dfs_boggle() by creating a random boggle board and
 // checking that each solution is a valid word in our dictionary.
 TEST(dfsBoggleTest, solutionsAreValid) {
-  TrieDictionary dictionary = TrieDictionary("/usr/share/dict/words");
-  set<string> valid_words = set<string>();
+  TrieDictionary d1 = TrieDictionary("/usr/share/dict/words");
+  HashDictionary d2 = HashDictionary("/usr/share/dict/words");
+  set<string> solutions = set<string>();
 
-  vector< vector<char> > game = 
-    vector< vector<char> >(ROWS, vector<char>(COLS));
-  vector< vector<bool> > visited = 
-    vector< vector<bool> >(ROWS, vector<bool>(COLS, false));
-
-  pair<int, int> indices;
+  int rows = 4, cols = 4;
   for (int count = 0; count < 100; count++)
   {
-    for (int i = 0; i < ROWS; i++)
-      for (int j = 0; j < COLS; j++)
-        game[i][j] = alphabet[rand() % 26]; 
- 
-    string s = "";
-    for (int i = 0; i < ROWS; i++)
-      for (int j = 0; j < COLS; j++)
-      {
-        indices = pair<int, int>(i, j);
-        dfs_boggle(valid_words, game, indices, s, visited, dictionary);
+    BoggleBoard board = BoggleBoard(rows, cols);
+    for (int i = 0; i < board.rows(); ++i) {
+      for (int j = 0; j < board.cols(); ++j) {
+        board.at(i, j) = alphabet[rand() % 26]; 
       }
+    }
+
+    BoggleSolver solver = BoggleSolver();
+    solver.setDictionary(d1);
+    solutions = solver.solve(board);
 
     set<string>::iterator i;
-    for (i = valid_words.begin(); i != valid_words.end(); i++)
-      EXPECT_TRUE(dictionary.isWord(*i));
+    for (i = solutions.begin(); i != solutions.end(); ++i) {
+      EXPECT_TRUE(d1.isWord(*i));
+      EXPECT_TRUE(d2.isWord(*i));
+    }
   }
 }
 
@@ -379,7 +383,7 @@ TEST(dfsBoggleTest, solutionsAreValid) {
 // Next we call readBoard() and store the return value in the second
 // board object. Finally we compare the values in the indices of each
 // board, which should be equal. We repeat this 1000 times.
-TEST(BoggleBoard, readFromFile) {
+TEST(BoggleBoard, readFromStream) {
   char b1[ROWS][COLS];
 
   char file[] = "/tmp/fileXXXXXX";
@@ -404,7 +408,7 @@ TEST(BoggleBoard, readFromFile) {
     ofs.close();
     ifs.open(file);
     BoggleBoard b2 = BoggleBoard();
-    b2.readFromFile(ifs);
+    b2.readFromStream(ifs);
     ifs.close();
 
     for (int i = 0; i < ROWS; i++)
@@ -413,6 +417,7 @@ TEST(BoggleBoard, readFromFile) {
   }
 }
 
+/*
 // Gets a random board and record the number of solutions for all
 // lower case. Toggle the cases of letters on this board and check that
 // the number of solutions do not change. If we want to test exhaustively,
@@ -463,6 +468,7 @@ TEST(dfsBoggleTest, caseInsensitiveBoard) {
     EXPECT_EQ(solutions.size(), n_solutions);
     solutions.clear();
   }
+  */
   
   /*
   // Use the following for an exhaustive test
@@ -498,12 +504,50 @@ TEST(dfsBoggleTest, caseInsensitiveBoard) {
     solutions.clear();
   }
   */
+/*
+}
+*/
+
+// We check that using the constructor BoggleBoard() gives us a board
+//  with 4 rows and 4 columns.
+// We check that using the constructor BoggleBoard(r, c) gives
+//  us a board with r rows and c columns for random values between
+//  1 and 1000.
+TEST(BoggleBoard, checkDimensions) {
+  int rows, cols;
+  int max = 1000;
+
+  BoggleBoard board = BoggleBoard();
+  EXPECT_EQ(4, board.rows());
+  EXPECT_EQ(4, board.cols());
+
+  for (int i = 0; i < 1000; ++i) {
+    rows = rand() % max + 1;
+    cols = rand() % max + 1;
+    BoggleBoard board = BoggleBoard(rows, cols);
+    EXPECT_EQ(rows, board.rows());
+    EXPECT_EQ(cols, board.cols());
+  }
+}
+
+// We check that an exception is raised if we specify a board
+//  with at least one negative dimension.
+TEST(BoggleBoard, negativeRowsOrColumns) {
+  int rows, cols;
+  int max = 1000;
+
+  for (int i = 0; i < 1000; ++i) {
+    rows = rand() % max - max / 2;
+    cols = rand() % max - max / 2;
+    if (rows < 0 || cols < 0) {
+      EXPECT_ANY_THROW(BoggleBoard board = BoggleBoard(rows, cols););
+    }
+  }
 }
 
 // We construct a board that is guaranteed to contain at least one
-// non-alphabetic character and call the readBoard() function.
-// We check to see that an exception was raised by the bad input.
-TEST(readBoard, nonAlphabeticInput) {
+// non-alphabetic character and call the BoggleBoard::isValid() function.
+TEST(BoggleBoard, invalidBoardNonalphabeticCharacter) {
   char file[] = "/tmp/fileXXXXXX";
   mkstemp(file);
   ofstream ofs;
@@ -511,6 +555,7 @@ TEST(readBoard, nonAlphabeticInput) {
   string bad_characters = "1234567890?./!@$%^&*()-[];,+=):";
   string characters = alphabet + bad_characters;
   bool caught;
+  BoggleBoard board = BoggleBoard(4, 4);
 
   for (int count = 0; count < 1000; count++)
   {
@@ -520,16 +565,34 @@ TEST(readBoard, nonAlphabeticInput) {
     ofs << bad_characters[rand() % bad_characters.length()];
     ofs.close();
     ifs.open(file);
-    caught = false;
-    try
-    {
-      readBoard(ifs);
-    }
-    catch (invalid_argument& e)
-    {
-      caught = true;  
-    }
-    EXPECT_TRUE(caught);
+    board.readFromStream(ifs);
+    EXPECT_FALSE(board.isValid());
+    ifs.close();
+  }
+}
+
+// We construct a board that is guaranteed to contain at least one
+// non-alphabetic character and call the BoggleBoard::isValid() function.
+TEST(BoggleBoard, validBoardAlphabeticCharacters) {
+  char file[] = "/tmp/fileXXXXXX";
+  mkstemp(file);
+  ofstream ofs;
+  ifstream ifs;
+  string bad_characters = "1234567890?./!@$%^&*()-[];,+=):";
+  string characters = alphabet + bad_characters;
+  bool caught;
+  BoggleBoard board = BoggleBoard(4, 4);
+
+  for (int count = 0; count < 1000; count++)
+  {
+    ofs.open(file);
+    for (int i = 0; i < 15; i++)
+      ofs << characters[rand() % characters.length()];
+    ofs << bad_characters[rand() % bad_characters.length()];
+    ofs.close();
+    ifs.open(file);
+    board.readFromStream(ifs);
+    EXPECT_FALSE(board.isValid());
     ifs.close();
   }
 }
@@ -543,6 +606,7 @@ TEST(readBoard, prematureEOF) {
   ofstream ofs;
   ifstream ifs;
   bool caught;
+  BoggleBoard board = BoggleBoard(4,4);
 
   int max;
   for (int count = 0; count < 1000; count++)
@@ -553,16 +617,7 @@ TEST(readBoard, prematureEOF) {
       ofs << alphabet[rand() % 26];
     ofs.close();
     ifs.open(file);
-    caught = false;
-    try
-    {
-      readBoard(ifs);
-    }
-    catch (ios_base::failure& e)
-    {
-      caught = true;  
-    }
-    EXPECT_TRUE(caught);
+    EXPECT_FALSE(board.readFromStream(ifs));
     ifs.close();
   }
 }
