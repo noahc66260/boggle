@@ -24,10 +24,6 @@
 // to do list:
 // 1. I need to decide if i want to pass in the boggle board through
 //    standard input only.
-// 3. Apparently my code doesn't break when I designate a board larger
-//    than characters available and it's possible that it's putting in
-//    empty characters such that it would add erroneous solutions 
-//    (boggle board entries must be in alphabet)
 // 4. Also, I need to learn how to embed a dictionary into a file
 //    for testing.
 // 5. and i need to get that dictionary discussed in Think Python.
@@ -35,6 +31,7 @@
 
 using namespace std;
 
+/*
 static const int buffer_len = 500;
 
 // rvalue[buffer_len - 1] must be '\0', same with cvalue, dvalue
@@ -109,6 +106,7 @@ void processOptions(int argc, char **argv, int* prows, int* pcols,
   parseOptions(argc, argv, cvalue, rvalue, dvalue);
   setValues(cvalue, rvalue, dvalue, prows, pcols, pfile);
 }
+*/
 
 int main(int argc, char **argv)
 {
@@ -129,7 +127,10 @@ int main(int argc, char **argv)
   }
   */
 
-  board.readFromStream(cin);
+  if (!board.readFromStream(cin)) {
+    printf("Too few characters for a %d by %d board\n", rows, cols);
+    exit(1);
+  }
 
   BoggleSolver solver = BoggleSolver();
   TrieDictionary dictionary = TrieDictionary(file);
