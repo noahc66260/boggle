@@ -19,7 +19,7 @@ class Trie
 {
   public:
     Trie();
-    Trie(char c);
+    explicit Trie(char c);
     ~Trie();
     int addWord(const string& s); // later make char * implementation
     int countWords(const string& s);

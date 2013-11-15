@@ -31,7 +31,7 @@ class HashDictionary : public DictionaryInterface
 {
   public:
     HashDictionary();
-    HashDictionary(string file); 
+    explicit HashDictionary(string file); 
     ~HashDictionary() {} 
     bool isWord(string s);
     bool isPrefix(string s);

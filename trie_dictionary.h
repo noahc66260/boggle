@@ -26,15 +26,13 @@
 #include <string>
 #include <vector>
 
-using namespace std; // remove later
 using std::string;
-using std::set;
 
 class TrieDictionary : public DictionaryInterface
 {
   public:
     TrieDictionary();
-    TrieDictionary(const string& file);  // later change it
+    explicit TrieDictionary(const string& file);  
     ~TrieDictionary() {}
     bool isWord(string s);
     bool isPrefix(string s);
