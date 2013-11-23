@@ -5,7 +5,7 @@
 
 #include "boggle.h"
 #include "dictionary.h"
-#include "hash_dictionary.h"
+//#include "hash_dictionary.h"
 #include "trie_dictionary.h"
 #include "boggle_board.h"
 #include "boggle_solver.h"
@@ -79,13 +79,13 @@ TEST(validIndexTest, goodValues) {
 // constructing/deconstructing our dictionary
 TEST(initializeDic, noSegFault) {
   string file = getDictionaryFile();
-  TrieDictionary d = TrieDictionary(file);
+  TrieDictionary d(file);
 }
 
 // This is an exhaustive test on the words from /usr/share/dict/words
 TEST(isWordTest, inDictionary) {
   string file = getDictionaryFile();
-  TrieDictionary d = TrieDictionary(file);
+  TrieDictionary d(file);
   ifstream ifs(file.c_str());
   string word;
   bool validWord;
@@ -112,7 +112,7 @@ TEST(isWordTest, caseInsensitive) {
   string file = getDictionaryFile();
   ifstream ifs(file.c_str());
 
-  TrieDictionary d = TrieDictionary(file);
+  TrieDictionary d(file);
   string word;
   while (ifs.good()) {
     ifs >> word;
@@ -136,7 +136,7 @@ TEST(isWordTest, caseInsensitive) {
 // we can expect not to find it.
 TEST(isWordTest, notInDictionary) {
   string file = getDictionaryFile();
-  TrieDictionary d = TrieDictionary(file);
+  TrieDictionary d(file);
   set<string> d_copy = set<string>();
   string word;
   bool validWord;
@@ -183,7 +183,7 @@ TEST(isWordTest, notInDictionary) {
 // be a prefix in our dictionary taken from the same file.
 TEST(isPrefixTest, invalidPrefixes) {
   string file = getDictionaryFile();
-  TrieDictionary d = TrieDictionary(file);
+  TrieDictionary d(file);
   set<string> prefixes = set<string>();
   string word;
   bool validWord;
@@ -245,7 +245,7 @@ TEST(isPrefixTest, allWordsArePrefixes) {
 // of random length per word rather than all prefix substrings.
 TEST(isPrefixTest, validPrefixes) {
   string file = getDictionaryFile();
-  TrieDictionary d = TrieDictionary(file);
+  TrieDictionary d(file);
   ifstream ifs(file.c_str());
   string word;
   bool validWord;
@@ -278,7 +278,7 @@ TEST(isPrefixTest, caseInsensitive) {
   string file = getDictionaryFile();
   ifstream ifs(file.c_str());
 
-  TrieDictionary d = TrieDictionary(file);
+  TrieDictionary d(file);
   string prefix;
   while (ifs.good()) {
     ifs >> prefix;
@@ -315,8 +315,8 @@ TEST(addWordTest, noDuplicates) {
     ofs.close();
   }
 
-  TrieDictionary d1 = TrieDictionary(file1);
-  TrieDictionary d2 = TrieDictionary(file2);
+  TrieDictionary d1(file1);
+  TrieDictionary d2(file2);
   int s1 = d1.size();
   int s2 = d2.size();
 
@@ -363,7 +363,7 @@ TEST(sizeTest, randomWords) {
       ofs << *iter << endl;
     }
     ofs.close();
-    TrieDictionary d = TrieDictionary(file);
+    TrieDictionary d(file);
     EXPECT_EQ(d.size(), words.size());
   }
 }
@@ -374,7 +374,7 @@ TEST(sizeTest, emptyFile) {
   char file[] = "/tmp/fileXXXXXX";
   mkstemp(file);
 
-  TrieDictionary d = TrieDictionary(file);
+  TrieDictionary d(file);
   EXPECT_EQ(d.size(), 0);
 }
 
@@ -382,8 +382,8 @@ TEST(sizeTest, emptyFile) {
 // checking that each solution is a valid word in our dictionary.
 TEST(dfsBoggleTest, solutionsAreValid) {
   string file = getDictionaryFile();
-  TrieDictionary d1 = TrieDictionary(file);
-  HashDictionary d2 = HashDictionary(file);
+  TrieDictionary d1(file);
+  //HashDictionary d2 = HashDictionary(file);
   set<string> solutions = set<string>();
 
   int rows = 4, cols = 4;
@@ -402,7 +402,7 @@ TEST(dfsBoggleTest, solutionsAreValid) {
     set<string>::iterator i;
     for (i = solutions.begin(); i != solutions.end(); ++i) {
       EXPECT_TRUE(d1.isWord(*i));
-      EXPECT_TRUE(d2.isWord(*i));
+      //EXPECT_TRUE(d2.isWord(*i));
     }
   }
 }

@@ -16,6 +16,9 @@
 // For the time being, this dictionary only considers valid input
 // tokens which only contain alphabetic characters. The dictionary
 // is not case sensitive.
+//
+// Use of this class requires a compiler compliant with C++11 because
+//  of the unordered_map object.
 
 #ifndef HOME_NOAH_DOCUMENTS_FOO_HASH_DICTIONARY_H 
 #define HOME_NOAH_DOCUMENTS_FOO_HASH_DICTIONARY_H
@@ -46,8 +49,6 @@ class HashDictionary : public DictionaryInterface
     // the "value" will always be the null byte
     unordered_map<string, char> words_;
     unordered_map<string, char> prefixes_;
-
-    // optionally explicitly disallow copy and assign
 };
 
 #endif // HOME_NOAH_DOCUMENTS_FOO_HASH_DICTIONARY_H

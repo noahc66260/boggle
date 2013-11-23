@@ -43,6 +43,10 @@ class TrieDictionary : public DictionaryInterface
     void addWord(const string& s);
     Trie head_;
     int unique_words_;
+
+    // disallow copy and assign
+    TrieDictionary(TrieDictionary & t) = delete;
+    TrieDictionary& operator=(TrieDictionary & t) = delete;
 };
 
 #endif // HOME_DOCUMENTS_FOO_TRIE_DICTIONARY_H

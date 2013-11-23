@@ -6,8 +6,8 @@
 // which itself has 26 pointers to Tries.
 // eh... I'm gonna count "proper" prefixes.
 
-#ifndef HOME_DOCUMENTS_FOO_TRIE_H
-#define HOME_DOCUMENTS_FOO_TRIE_H
+#ifndef HOME_NOAH_DOCUMENTS_FOO_TRIE_H
+#define HOME_NOAH_DOCUMENTS_FOO_TRIE_H
 
 #include <string>
 #include <vector>
@@ -31,6 +31,10 @@ class Trie
     int prefixes_;
     vector< Trie* > edges_; // later make array implementation
     static const string valid_characters_;
+
+    // disallow copy and assign
+    Trie(Trie& t) = delete;
+    Trie& operator=(Trie& t) = delete;
 };
 
-#endif // HOME_DOCUMENTS_FOO_TRIE_H
+#endif // HOME_NOAH_DOCUMENTS_FOO_TRIE_H
