@@ -424,8 +424,6 @@ TEST(BoggleBoard, readFromStream) {
   ifstream ifs;
 
   for (int count = 0; count < 1000; ++count) {
-    // we don't need to add the spacing, but let's make it look
-    // like how the user might prefer to write it
     rows = rand() % 8 + 1;
     cols = rand() % 8 + 1;
     char b1[rows][cols];
@@ -550,17 +548,32 @@ TEST(dfsBoggleTest, caseInsensitiveBoard) {
 TEST(BoggleBoard, checkDimensions) {
   int rows, cols;
   int max = 1000;
+  char default_value = '\0';
 
+  // check default construction
+  rows = 4;
+  cols = 4;
   BoggleBoard board = BoggleBoard();
-  EXPECT_EQ(4, board.rows());
-  EXPECT_EQ(4, board.cols());
+  EXPECT_EQ(rows, board.rows());
+  EXPECT_EQ(cols, board.cols());
+  for (int i = 0; i < rows; ++i) {
+    for (int j = 0; j < cols; ++j) {
+      EXPECT_EQ(default_value, board.at(i, j));
+    }
+  }
 
-  for (int i = 0; i < 1000; ++i) {
+  // check constructor with arguments
+  for (int i = 0; i < 200; ++i) {
     rows = rand() % max + 1;
     cols = rand() % max + 1;
     BoggleBoard board = BoggleBoard(rows, cols);
     EXPECT_EQ(rows, board.rows());
     EXPECT_EQ(cols, board.cols());
+    for (int i = 0; i < rows; ++i) {
+      for (int j = 0; j < cols; ++j) {
+        EXPECT_EQ(default_value, board.at(i, j));
+      }
+    }
   }
 }
 
