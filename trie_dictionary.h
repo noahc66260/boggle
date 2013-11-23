@@ -17,8 +17,8 @@
 // tokens which only contain alphabetic characters. The dictionary
 // is not case sensitive.
 
-#ifndef HOME_DOCUMENTS_FOO_TRIE_DICTIONARY_H 
-#define HOME_DOCUMENTS_FOO_TRIE_DICTIONARY_H
+#ifndef HOME_NOAH_DOCUMENTS_FOO_TRIE_DICTIONARY_H 
+#define HOME_NOAH_DOCUMENTS_FOO_TRIE_DICTIONARY_H
 
 #include "dictionary.h"
 #include "trie.h"
@@ -49,4 +49,4 @@ class TrieDictionary : public DictionaryInterface
     TrieDictionary& operator=(TrieDictionary & t) = delete;
 };
 
-#endif // HOME_DOCUMENTS_FOO_TRIE_DICTIONARY_H
+#endif // HOME_NOAH_DOCUMENTS_FOO_TRIE_DICTIONARY_H
