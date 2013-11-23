@@ -31,6 +31,27 @@ using namespace std;
 
 const string alphabet = "abcdefghijklmnopqrstuvwxyz"; // for random letters
 
+// holy crap. This works!!!
+// http://www.linuxjournal.com/content/embedding-file-executable-aka-hello-world-version-5967
+extern char _binary_words_txt_start;
+extern char _binary_words_txt_end;
+string getDictionaryFile(void) {
+  static bool flag = false;
+  static string tmpfile;
+
+  if (!flag) {
+    char file[] = "/tmp/fileXXXXXX";
+    mkstemp(file);
+    ofstream ofs(file);
+    char*  p = &_binary_words_txt_start;
+    while ( p != &_binary_words_txt_end ) {
+      ofs << *p++;
+    }
+    tmpfile = file;
+    flag = true;
+  }
+  return tmpfile;
+}
 /*
 // Tests that the validIndex() function returns false for indices
 // that do not correspond to entries in a ROWS x COLS matrix
@@ -60,13 +81,13 @@ TEST(validIndexTest, goodValues) {
 // If memory is not managed correctly, we may seg fault just
 // constructing/deconstructing our dictionary
 TEST(initializeDic, noSegFault) {
-  string file = "/usr/share/dict/words";
+  string file = getDictionaryFile();
   TrieDictionary d = TrieDictionary(file);
 }
 
 // This is an exhaustive test on the words from /usr/share/dict/words
 TEST(isWordTest, inDictionary) {
-  string file = "/usr/share/dict/words";
+  string file = getDictionaryFile();
   TrieDictionary d = TrieDictionary(file);
   ifstream ifs(file.c_str());
   string word;
@@ -89,7 +110,8 @@ TEST(isWordTest, inDictionary) {
 // then randomly toggle the case of each letter and verify that
 // Dictionary::isWord() still returns true.
 TEST(isWordTest, caseInsensitive) {
-  string file = "/usr/share/dict/words";
+  //string file = "/usr/share/dict/words";
+  string file = getDictionaryFile();
   ifstream ifs(file.c_str());
 
   TrieDictionary d = TrieDictionary(file);
@@ -117,11 +139,12 @@ TEST(isWordTest, caseInsensitive) {
 // in the set then it should not be in the dictionary and hence
 // we can expect not to find it.
 TEST(isWordTest, notInDictionary) {
-  TrieDictionary d = TrieDictionary("/usr/share/dict/words");
+  string file = getDictionaryFile();
+  TrieDictionary d = TrieDictionary(file);
   set<string> d_copy = set<string>();
   string word;
   bool validWord;
-  ifstream ifs("/usr/share/dict/words");
+  ifstream ifs(file.c_str());
   while (ifs.good())
   {
     ifs >> word;
@@ -162,23 +185,23 @@ TEST(isWordTest, notInDictionary) {
 // If said token is not a contained in our set, it should not
 // be a prefix in our dictionary taken from the same file.
 TEST(isPrefixTest, invalidPrefixes) {
-  TrieDictionary d = TrieDictionary("/usr/share/dict/words");
+  string file = getDictionaryFile();
+  TrieDictionary d = TrieDictionary(file);
   set<string> prefixes = set<string>();
   string word;
   bool validWord;
-  ifstream ifs("/usr/share/dict/words");
-  while (ifs.good())
-  {
+  ifstream ifs(file.c_str()); // for some reason I can't use a string...
+  while (ifs.good()) {
     ifs >> word;
     validWord = true;
-    for (unsigned i = 0; i < word.length(); i++)
-      if (!isalpha(word[i]))
+    for (unsigned i = 0; i < word.length(); i++) {
+      if (!isalpha(word[i])) {
         validWord = false;
+      }
+    }
     transform(word.begin(), word.end(), word.begin(), ::tolower);
-    if (validWord)
-    {
-      for (int i = word.length(); 0 < i; i--)
-      {
+    if (validWord) {
+      for (int i = word.length(); 0 < i; i--) {
         word = word.substr(0, i);
         prefixes.insert(word);
       }
@@ -188,14 +211,12 @@ TEST(isPrefixTest, invalidPrefixes) {
   word.clear();
   char c;
   int tries = 0;
-  while (tries < 100000)
-  {
+  while (tries < 100000) {
     if (word.length() > 8) // arbitrary choice
       word.clear();
     c = alphabet[rand() % 26]; 
     word += string(1, c);
-    if (0 == prefixes.count(word))
-    {
+    if (0 == prefixes.count(word)) {
       EXPECT_FALSE(d.isPrefix(word));
       tries++;
     }
@@ -226,13 +247,12 @@ TEST(isPrefixTest, allWordsArePrefixes) {
 // If this takes too long you may modify it to check one prefix substring
 // of random length per word rather than all prefix substrings.
 TEST(isPrefixTest, validPrefixes) {
-  string file = "/usr/share/dict/words";
+  string file = getDictionaryFile();
   TrieDictionary d = TrieDictionary(file);
   ifstream ifs(file.c_str());
   string word;
   bool validWord;
-  while (ifs.good())
-  {
+  while (ifs.good()) {
     ifs >> word;
     validWord = true;
     for (unsigned i = 0; i < word.length(); i++)
@@ -240,10 +260,8 @@ TEST(isPrefixTest, validPrefixes) {
         validWord = false;
     //word = word.substr(0, rand() % word.length());
     transform(word.begin(), word.end(), word.begin(), ::tolower);
-    if (validWord)
-    {
-      for (int i = word.length() - 1; 0 < i; i--)
-      {
+    if (validWord) {
+      for (int i = word.length() - 1; 0 < i; i--) {
         word = word.substr(0, i);
         EXPECT_TRUE(d.isPrefix(word));
       }
@@ -258,20 +276,18 @@ TEST(isPrefixTest, validPrefixes) {
 // then we randomly toggle the case of each letter and verify that
 // Dictionary::isPrefix() still returns true.
 TEST(isPrefixTest, caseInsensitive) {
-  string file = "/usr/share/dict/words";
+  string file = getDictionaryFile();
   ifstream ifs(file.c_str());
 
   TrieDictionary d = TrieDictionary(file);
   string prefix;
-  while (ifs.good())
-  {
+  while (ifs.good()) {
     ifs >> prefix;
+    if (prefix.empty()) continue;
     prefix = prefix.substr(0, rand() % prefix.length());
-    if (d.isPrefix(prefix))
-    {
-      for (unsigned i = 0; i < prefix.length(); i++)
-        if (rand() % 2 == 0)
-        {
+    if (d.isPrefix(prefix)) {
+      for (unsigned i = 0; i < prefix.length(); ++i)
+        if (rand() % 2 == 0) {
           char c = prefix[i];
           prefix[i] = isupper(c) ? tolower(c) : toupper(c);
         }
@@ -284,8 +300,23 @@ TEST(isPrefixTest, caseInsensitive) {
 // /home/noah/Documents/foo/doubleWords was created by concatenating
 // two copies of /usr/share/dict/words.
 TEST(addWordTest, noDuplicates) {
-  TrieDictionary d1 = TrieDictionary("/usr/share/dict/words");
-  TrieDictionary d2 = TrieDictionary("/home/noah/Documents/foo/doubleWords");
+  string file1 = getDictionaryFile();
+  char file2[] = "/tmp/fileXXXXXX";
+  mkstemp(file2);
+  for (int i = 0; i < 2; ++i) {
+    string s;
+    ifstream ifs(file1.c_str());
+    ofstream ofs(file2);
+    while (ifs.good()) {
+      ifs >> s;
+      ofs << s << endl;
+    }
+    ifs.close();
+    ofs.close();
+  }
+
+  TrieDictionary d1 = TrieDictionary(file1);
+  TrieDictionary d2 = TrieDictionary(file2);
   int s1 = d1.size();
   int s2 = d2.size();
 
@@ -298,10 +329,10 @@ TEST(addWordTest, noDuplicates) {
 // tr ' ' '\n' < vwoolf2.txt | tr '[A-Z]' '[a-z]' | 
 //    sort vwoolf2.txt | uniq | sed '/^$/d' | wc -l
 // Here vwoolf2.txt has no punctuation.
-TEST(sizeTest, virginiaWoolf) {
-  TrieDictionary d = TrieDictionary("/home/noah/Documents/foo/vwoolf2.txt");
-  EXPECT_EQ(d.size(), 337);
-}
+//TEST(sizeTest, virginiaWoolf) {
+//  TrieDictionary d = TrieDictionary("/home/noah/Documents/foo/vwoolf2.txt");
+//  EXPECT_EQ(d.size(), 337);
+//}
 
 // We create random files with a random positive number of unique words
 // with varying lengths using the STL set. We read this file into with
@@ -351,13 +382,13 @@ TEST(sizeTest, emptyFile) {
 // We test dfs_boggle() by creating a random boggle board and
 // checking that each solution is a valid word in our dictionary.
 TEST(dfsBoggleTest, solutionsAreValid) {
-  TrieDictionary d1 = TrieDictionary("/usr/share/dict/words");
-  HashDictionary d2 = HashDictionary("/usr/share/dict/words");
+  string file = getDictionaryFile();
+  TrieDictionary d1 = TrieDictionary(file);
+  HashDictionary d2 = HashDictionary(file);
   set<string> solutions = set<string>();
 
   int rows = 4, cols = 4;
-  for (int count = 0; count < 100; count++)
-  {
+  for (int count = 0; count < 100; count++) {
     BoggleBoard board = BoggleBoard(rows, cols);
     for (int i = 0; i < board.rows(); ++i) {
       for (int j = 0; j < board.cols(); ++j) {
