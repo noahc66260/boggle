@@ -1,5 +1,4 @@
-// boggle_test.cpp
-// Tests the Dictionary class from dic.h and boggle functions from boggle.h
+// boggle_test.cc
 //
 // 1. I need to add functions to verify parsing in boggle.h and boggle.cc
 // 2. Also... you need to check the at() function for BoggleBoard class
@@ -29,7 +28,7 @@ using namespace std;
 
 // 1. add tests for BoggleSolver, alter tests for dfs_boggle
 
-const string alphabet = "abcdefghijklmnopqrstuvwxyz"; // for random letters
+const string alphabet = "abcdefghijklmnopqrstuvwxyz"; 
 
 // holy crap. This works!!!
 // http://www.linuxjournal.com/content/embedding-file-executable-aka-hello-world-version-5967
@@ -170,7 +169,7 @@ TEST(isWordTest, notInDictionary) {
     if (word.length() > 8) { // arbitrary choice 
       word.clear();
     }
-    c = alphabet[rand() % 26];
+    c = alphabet[rand() % alphabet.size()];
     word += string(1, c);
     if (0 == d_copy.count(word)) {
       EXPECT_FALSE(d.isWord(word));
@@ -214,7 +213,7 @@ TEST(isPrefixTest, invalidPrefixes) {
   while (tries < 100000) {
     if (word.length() > 8) // arbitrary choice
       word.clear();
-    c = alphabet[rand() % 26]; 
+    c = alphabet[rand() % alphabet.size()]; 
     word += string(1, c);
     if (0 == prefixes.count(word)) {
       EXPECT_FALSE(d.isPrefix(word));
@@ -353,7 +352,7 @@ TEST(sizeTest, randomWords) {
       string word;
       int word_length = rand() % 20 + 1;
       for (int j = 0; j < word_length; ++j) {
-        word += alphabet[rand() % 26]; 
+        word += alphabet[rand() % alphabet.size()]; 
       }
       if (!words.count(word)) {
         words.insert(word);
@@ -394,7 +393,7 @@ TEST(dfsBoggleTest, solutionsAreValid) {
     BoggleBoard board = BoggleBoard(rows, cols);
     for (int i = 0; i < board.rows(); ++i) {
       for (int j = 0; j < board.cols(); ++j) {
-        board.at(i, j) = alphabet[rand() % 26]; 
+        board.at(i, j) = alphabet[rand() % alphabet.size()]; 
       }
     }
 
@@ -417,7 +416,7 @@ TEST(dfsBoggleTest, solutionsAreValid) {
 // board object. Finally we compare the values in the indices of each
 // board, which should be equal. We repeat this 1000 times.
 TEST(BoggleBoard, readFromStream) {
-  char b1[ROWS][COLS];
+  int rows, cols;
 
   char file[] = "/tmp/fileXXXXXX";
   mkstemp(file);
@@ -427,22 +426,25 @@ TEST(BoggleBoard, readFromStream) {
   for (int count = 0; count < 1000; ++count) {
     // we don't need to add the spacing, but let's make it look
     // like how the user might prefer to write it
+    rows = rand() % 8 + 1;
+    cols = rand() % 8 + 1;
+    char b1[rows][cols];
     ofs.open(file);
-    for (int i = 0; i < ROWS; ++i) {
-      if (0 != i) { ofs << endl; }
-      for (int j = 0; j < COLS; ++j) {
-        b1[i][j] = alphabet[rand() % 26];
+    for (int i = 0; i < rows; ++i) {
+      if (0 < i) { ofs << endl; }
+      for (int j = 0; j < cols; ++j) {
+        b1[i][j] = alphabet[rand() % alphabet.size()];
         ofs << b1[i][j] << " ";
       }
     }
     ofs.close();
     ifs.open(file);
-    BoggleBoard b2 = BoggleBoard();
+    BoggleBoard b2 = BoggleBoard(rows, cols);
     b2.readFromStream(ifs);
     ifs.close();
 
-    for (int i = 0; i < ROWS; ++i) {
-      for (int j = 0; j < COLS; ++j) {
+    for (int i = 0; i < rows; ++i) {
+      for (int j = 0; j < cols; ++j) {
         EXPECT_EQ(b1[i][j], b2.at(i,j));
       }
     }
@@ -645,7 +647,7 @@ TEST(readBoard, prematureEOF) {
     ofs.open(file);
     max = rand() % 16;
     for (int i = 0; i < max; ++i) {
-      ofs << alphabet[rand() % 26];
+      ofs << alphabet[rand() % alphabet.size()];
     }
     ofs.close();
     ifs.open(file);
