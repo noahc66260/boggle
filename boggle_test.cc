@@ -21,8 +21,6 @@
 #include <utility>
 #include <iostream>
 
-#define ROWS 4
-#define COLS 4
 
 using namespace std;
 
@@ -595,18 +593,19 @@ TEST(BoggleBoard, negativeRowsOrColumns) {
 // We construct a board that is guaranteed to contain at least one
 // non-alphabetic character and call the BoggleBoard::isValid() function.
 TEST(BoggleBoard, invalidBoardNonalphabeticCharacter) {
+  int rows = 4, cols = 4;
   char file[] = "/tmp/fileXXXXXX";
   mkstemp(file);
   ofstream ofs;
   ifstream ifs;
   string bad_characters = "1234567890?./!@$%^&*()-[];,+=):";
   string characters = alphabet + bad_characters;
-  bool caught;
-  BoggleBoard board = BoggleBoard(4, 4);
+  //bool caught;
+  BoggleBoard board = BoggleBoard(rows, cols);
 
   for (int count = 0; count < 1000; ++count) {
     ofs.open(file);
-    for (int i = 0; i < 15; ++i) {
+    for (int i = 0; i < rows*cols - 1; ++i) {
       ofs << characters[rand() % characters.length()];
     }
     ofs << bad_characters[rand() % bad_characters.length()];
@@ -621,18 +620,19 @@ TEST(BoggleBoard, invalidBoardNonalphabeticCharacter) {
 // We construct a board that is guaranteed to contain at least one
 // non-alphabetic character and call the BoggleBoard::isValid() function.
 TEST(BoggleBoard, validBoardAlphabeticCharacters) {
+  int rows = 4, cols = 4;
   char file[] = "/tmp/fileXXXXXX";
   mkstemp(file);
   ofstream ofs;
   ifstream ifs;
   string bad_characters = "1234567890?./!@$%^&*()-[];,+=):";
   string characters = alphabet + bad_characters;
-  bool caught;
-  BoggleBoard board = BoggleBoard(4, 4);
+  //bool caught;
+  BoggleBoard board = BoggleBoard(rows, cols);
 
   for (int count = 0; count < 1000; ++count) {
     ofs.open(file);
-    for (int i = 0; i < 15; ++i) {
+    for (int i = 0; i < rows*cols - 1; ++i) {
       ofs << characters[rand() % characters.length()]; 
     }
     ofs << bad_characters[rand() % bad_characters.length()];
@@ -648,17 +648,18 @@ TEST(BoggleBoard, validBoardAlphabeticCharacters) {
 // with too few characters to make a boggle board. This test
 // checks that the ios_base::failure exception is thrown.
 TEST(readBoard, prematureEOF) {
+  int rows = 4, cols = 4;
   char file[] = "/tmp/fileXXXXXX";
   mkstemp(file);
   ofstream ofs;
   ifstream ifs;
-  bool caught;
-  BoggleBoard board = BoggleBoard(4,4);
+  //bool caught;
+  BoggleBoard board = BoggleBoard(rows, cols);
 
   int max;
   for (int count = 0; count < 1000; ++count) {
     ofs.open(file);
-    max = rand() % 16;
+    max = rand() % rows*cols;
     for (int i = 0; i < max; ++i) {
       ofs << alphabet[rand() % alphabet.size()];
     }
@@ -673,7 +674,4 @@ int main(int argc, char **argv) {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }
-
-#undef ROWS
-#undef COLS
 
