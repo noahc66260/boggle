@@ -1,6 +1,6 @@
 // hash_dictionary.h
 // Using the DictionaryInterface abstract base class, implements a 
-// dictionary by using a STL set object (hash table). 
+// dictionary by using a STL unordered_map object (hash table). 
 //
 // Suppose: 
 //  n is the number of words in the dictionary
@@ -17,15 +17,15 @@
 // tokens which only contain alphabetic characters. The dictionary
 // is not case sensitive.
 
-#ifndef HOME_DOCUMENTS_FOO_HASH_DICTIONARY_H 
-#define HOME_DOCUMENTS_FOO_HASH_DICTIONARY_H
+#ifndef HOME_NOAH_DOCUMENTS_FOO_HASH_DICTIONARY_H 
+#define HOME_NOAH_DOCUMENTS_FOO_HASH_DICTIONARY_H
 
 #include "dictionary.h"
-#include <set>
+#include <unordered_map>
 #include <string>
 
 using std::string;
-using std::set;
+using std::unordered_map;
 
 class HashDictionary : public DictionaryInterface
 {
@@ -43,10 +43,11 @@ class HashDictionary : public DictionaryInterface
     // Validating the words before inserting speeds up the program by
     // a factor of 3, so I'm not sure I want to remove this just yet.
     bool validWord(string word);
-    set<string> words_;
-    set<string> prefixes_;
+    // the "value" will always be the null byte
+    unordered_map<string, char> words_;
+    unordered_map<string, char> prefixes_;
 
     // optionally explicitly disallow copy and assign
 };
 
-#endif // HOME_DOCUMENTS_FOO_HASH_DICTIONARY_H
+#endif // HOME_NOAH_DOCUMENTS_FOO_HASH_DICTIONARY_H

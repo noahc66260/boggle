@@ -6,7 +6,8 @@
 #include <string>
 #include <algorithm>
 #include <cctype>
-#include <set>
+#include <unordered_map>
+#include <utility>
 
 using std::string;
 
@@ -36,11 +37,14 @@ void HashDictionary::init(string file)
   while (ifs.good()) {
     transform(word.begin(), word.end(), word.begin(), ::tolower);
     if (validWord(word)) {
+      std::pair<string, char> entry = {"", '\0'};
       for (unsigned i = 0; i < word.length(); ++i) {
-        prefixes_.insert(word.substr(0, i));
+        entry.first = word.substr(0, i);
+        prefixes_.insert(entry);
       }
-      prefixes_.insert(word);
-      words_.insert(word);
+      entry.first = word;
+      prefixes_.insert(entry);
+      words_.insert(entry);
     }
     ifs >> word;
   }
