@@ -92,16 +92,18 @@ TEST(isWordTest, inDictionary) {
   ifstream ifs(file.c_str());
   string word;
   bool validWord;
-  while (ifs.good())
-  {
+  while (ifs.good()) {
     ifs >> word;
     validWord = true;
-    for (unsigned i = 0; i < word.length(); i++)
-      if (!isalpha(word[i]))
+    for (unsigned i = 0; i < word.length(); ++i) {
+      if (!isalpha(word[i])) {
         validWord = false;
+      }
+    }
     transform(word.begin(), word.end(), word.begin(), ::tolower);
-    if (validWord)
+    if (validWord) {
       EXPECT_TRUE(d.isWord(word));
+    }
   }
 }
 
@@ -110,23 +112,20 @@ TEST(isWordTest, inDictionary) {
 // then randomly toggle the case of each letter and verify that
 // Dictionary::isWord() still returns true.
 TEST(isWordTest, caseInsensitive) {
-  //string file = "/usr/share/dict/words";
   string file = getDictionaryFile();
   ifstream ifs(file.c_str());
 
   TrieDictionary d = TrieDictionary(file);
   string word;
-  while (ifs.good())
-  {
+  while (ifs.good()) {
     ifs >> word;
-    if (d.isWord(word))
-    {
-      for (unsigned i = 0; i < word.length(); i++)
-        if (rand() % 2 == 0)
-        {
+    if (d.isWord(word)) {
+      for (unsigned i = 0; i < word.length(); ++i) {
+        if (rand() % 2 == 0) {
           char c = word[i];
           word[i] = isupper(c) ? tolower(c) : toupper(c);
         }
+      }
       EXPECT_TRUE(d.isWord(word));
     }
   }
@@ -145,16 +144,18 @@ TEST(isWordTest, notInDictionary) {
   string word;
   bool validWord;
   ifstream ifs(file.c_str());
-  while (ifs.good())
-  {
+  while (ifs.good()) {
     ifs >> word;
     validWord = true;
-    for (unsigned i = 0; i < word.length(); i++)
-      if (!isalpha(word[i]))
-        validWord = false;
+    for (unsigned i = 0; i < word.length(); ++i) {
+      if (!isalpha(word[i])) {
+        validWord = false; 
+      }
+    }
     transform(word.begin(), word.end(), word.begin(), ::tolower);
-    if (validWord)
+    if (validWord) {
       d_copy.insert(word);
+    }
   }
 
   // This test has its limits considering our random number isn't over
@@ -165,14 +166,13 @@ TEST(isWordTest, notInDictionary) {
   word.clear();
   char c;
   int tries = 0;
-  while (tries < 100000)
-  {
-    if (word.length() > 8) // arbitrary choice
+  while (tries < 100000) {
+    if (word.length() > 8) { // arbitrary choice 
       word.clear();
+    }
     c = alphabet[rand() % 26];
     word += string(1, c);
-    if (0 == d_copy.count(word))
-    {
+    if (0 == d_copy.count(word)) {
       EXPECT_FALSE(d.isWord(word));
       tries++;
     }
@@ -194,14 +194,14 @@ TEST(isPrefixTest, invalidPrefixes) {
   while (ifs.good()) {
     ifs >> word;
     validWord = true;
-    for (unsigned i = 0; i < word.length(); i++) {
+    for (unsigned i = 0; i < word.length(); ++i) {
       if (!isalpha(word[i])) {
         validWord = false;
       }
     }
     transform(word.begin(), word.end(), word.begin(), ::tolower);
     if (validWord) {
-      for (int i = word.length(); 0 < i; i--) {
+      for (int i = word.length(); 0 < i; --i) {
         word = word.substr(0, i);
         prefixes.insert(word);
       }
@@ -255,13 +255,15 @@ TEST(isPrefixTest, validPrefixes) {
   while (ifs.good()) {
     ifs >> word;
     validWord = true;
-    for (unsigned i = 0; i < word.length(); i++)
-      if (!isalpha(word[i]))
+    for (unsigned i = 0; i < word.length(); ++i) {
+      if (!isalpha(word[i])) {
         validWord = false;
+      }
+    }
     //word = word.substr(0, rand() % word.length());
     transform(word.begin(), word.end(), word.begin(), ::tolower);
     if (validWord) {
-      for (int i = word.length() - 1; 0 < i; i--) {
+      for (int i = word.length() - 1; 0 < i; --i) {
         word = word.substr(0, i);
         EXPECT_TRUE(d.isPrefix(word));
       }
@@ -286,11 +288,12 @@ TEST(isPrefixTest, caseInsensitive) {
     if (prefix.empty()) continue;
     prefix = prefix.substr(0, rand() % prefix.length());
     if (d.isPrefix(prefix)) {
-      for (unsigned i = 0; i < prefix.length(); ++i)
+      for (unsigned i = 0; i < prefix.length(); ++i) {
         if (rand() % 2 == 0) {
           char c = prefix[i];
           prefix[i] = isupper(c) ? tolower(c) : toupper(c);
         }
+      }
       EXPECT_TRUE(d.isPrefix(prefix));
     }
   }
@@ -343,8 +346,7 @@ TEST(sizeTest, randomWords) {
   mkstemp(file);
 
   string word;
-  for (int i = 0; i < 50; i++)
-  {
+  for (int i = 0; i < 50; ++i) {
     int n_words = rand() % 10000 + 1;
     set<string> words;
     while (words.size() < n_words) {
@@ -422,16 +424,13 @@ TEST(BoggleBoard, readFromStream) {
   ofstream ofs;
   ifstream ifs;
 
-  for (int count = 0; count < 1000; count++)
-  {
+  for (int count = 0; count < 1000; ++count) {
     // we don't need to add the spacing, but let's make it look
     // like how the user might prefer to write it
     ofs.open(file);
-    for (int i = 0; i < ROWS; i++)
-    {
-      if (0 != i) ofs << endl;
-      for (int j = 0; j < COLS; j++)
-      {
+    for (int i = 0; i < ROWS; ++i) {
+      if (0 != i) { ofs << endl; }
+      for (int j = 0; j < COLS; ++j) {
         b1[i][j] = alphabet[rand() % 26];
         ofs << b1[i][j] << " ";
       }
@@ -442,9 +441,11 @@ TEST(BoggleBoard, readFromStream) {
     b2.readFromStream(ifs);
     ifs.close();
 
-    for (int i = 0; i < ROWS; i++)
-      for (int j = 0; j < COLS; j++)
+    for (int i = 0; i < ROWS; ++i) {
+      for (int j = 0; j < COLS; ++j) {
         EXPECT_EQ(b1[i][j], b2.at(i,j));
+      }
+    }
   }
 }
 
@@ -588,11 +589,11 @@ TEST(BoggleBoard, invalidBoardNonalphabeticCharacter) {
   bool caught;
   BoggleBoard board = BoggleBoard(4, 4);
 
-  for (int count = 0; count < 1000; count++)
-  {
+  for (int count = 0; count < 1000; ++count) {
     ofs.open(file);
-    for (int i = 0; i < 15; i++)
+    for (int i = 0; i < 15; ++i) {
       ofs << characters[rand() % characters.length()];
+    }
     ofs << bad_characters[rand() % bad_characters.length()];
     ofs.close();
     ifs.open(file);
@@ -614,11 +615,11 @@ TEST(BoggleBoard, validBoardAlphabeticCharacters) {
   bool caught;
   BoggleBoard board = BoggleBoard(4, 4);
 
-  for (int count = 0; count < 1000; count++)
-  {
+  for (int count = 0; count < 1000; ++count) {
     ofs.open(file);
-    for (int i = 0; i < 15; i++)
-      ofs << characters[rand() % characters.length()];
+    for (int i = 0; i < 15; ++i) {
+      ofs << characters[rand() % characters.length()]; 
+    }
     ofs << bad_characters[rand() % bad_characters.length()];
     ofs.close();
     ifs.open(file);
@@ -640,12 +641,12 @@ TEST(readBoard, prematureEOF) {
   BoggleBoard board = BoggleBoard(4,4);
 
   int max;
-  for (int count = 0; count < 1000; count++)
-  {
+  for (int count = 0; count < 1000; ++count) {
     ofs.open(file);
     max = rand() % 16;
-    for (int i = 0; i < max; i++)
+    for (int i = 0; i < max; ++i) {
       ofs << alphabet[rand() % 26];
+    }
     ofs.close();
     ifs.open(file);
     EXPECT_FALSE(board.readFromStream(ifs));
