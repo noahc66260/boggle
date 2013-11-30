@@ -1,11 +1,13 @@
 // boggle_board.cc
+// Implementation for the BoggleBoard class
 // 
 // The underlying board is implemented as a vector of vector of chars.
-// The game of boggle is played on a 4 x 4 board, but we allow the client
-// to choose their own dimensions so that boggle variants may be played.
-// The board is initialized by reading a stream. To promote modularity,
-// reading in data is kept separate from verifying that the data read in
-// represents a valid boggle board of alphabetic characters.
+//  The game of boggle is played on a 4 x 4 board, but we allow the client
+//  to choose their own dimensions so that boggle variants may be played.
+//  The board is initialized by reading a stream. To promote modularity,
+//  data input is kept separate from verification.
+//
+// A valid boggle board has an alphabetic character in each entry.
 
 #include "boggle_board.h"
 
@@ -18,8 +20,8 @@ BoggleBoard::BoggleBoard()
 }
 
 // Underlying implementation uses the STL vector object, so inappropriate
-// input will be dealt with indirectly through the std::vector class. 
-// This arrangement does not preclude making a boggle board with one
+//  input will be dealt with indirectly through the std::vector class. 
+//  This arrangement does not preclude making a boggle board with one
 //  dimension equal to 0 (or both). This is an unchecked runtime error.
 BoggleBoard::BoggleBoard(int rows, int cols)
 {
@@ -45,36 +47,20 @@ bool BoggleBoard::readFromStream(istream& is)
 }
 
 // Returns true if board_ is of dimensions rows_ x cols_ and if
-//  each entry is an alphabetic character.
+//  each entry is an alphabetic character (case insensitive).
 bool BoggleBoard::isValid()
 {
-  using std::isalpha;
-
-  if (board_.size() != rows_) {
+  if (board_.size() != (unsigned) rows_) {
     return false;
   }
   for (int i = 0; i < rows_; ++i) {
     for (int j = 0; j < cols_; ++j) {
-      if (board_[j].size() != cols_) {
+      if (board_[j].size() != (unsigned) cols_) {
         return false;
-      } else if (!isalpha(board_[i][j])) {
+      } else if (!std::isalpha(board_[i][j])) {
         return false;
       }
     }
   }
   return true;
 }
-
-char& BoggleBoard::at(int i, int j)
-{
-  //return  board_[i][j]; 
-  return  board_.at(i).at(j); 
-}
-
-const char& BoggleBoard::at(int i, int j) const
-{
-  //return  board_[i][j]; 
-  return  board_.at(i).at(j); 
-}
-
-

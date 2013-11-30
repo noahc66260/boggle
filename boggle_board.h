@@ -30,12 +30,13 @@ class BoggleBoard
     bool readFromStream(istream& is); 
 
     // Returns true if we have rows() x cols() characters stored in the 
-    //  board and each character is alphabetical. 
+    //  board and each character is alphabetical, corresponding to a 
+    //  valid boggle board configuration.
     bool isValid(); 
 
     // Returns the character stored at index (i, j) in the board.
-    char& at(int i, int j);
-    const char& at(int i, int j) const; 
+    char& at(int i, int j) {return board_.at(i).at(j);}
+    const char& at(int i, int j) const {return board_.at(i).at(j);} 
   private:
     int rows_, cols_;
     vector< vector<char> > board_;
