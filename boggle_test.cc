@@ -4,7 +4,7 @@
 // 2. Also... you need to check the at() function for BoggleBoard class
 
 #include "boggle.h"
-#include "dictionary.h"
+#include "dictionary_interface.h"
 //#include "hash_dictionary.h"
 #include "trie_dictionary.h"
 #include "boggle_board.h"

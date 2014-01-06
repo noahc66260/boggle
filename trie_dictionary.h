@@ -20,7 +20,7 @@
 #ifndef HOME_NOAH_DOCUMENTS_FOO_TRIE_DICTIONARY_H 
 #define HOME_NOAH_DOCUMENTS_FOO_TRIE_DICTIONARY_H
 
-#include "dictionary.h"
+#include "dictionary_interface.h"
 #include "trie.h"
 #include <set>
 #include <string>

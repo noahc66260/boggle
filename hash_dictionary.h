@@ -23,7 +23,7 @@
 #ifndef HOME_NOAH_DOCUMENTS_FOO_HASH_DICTIONARY_H 
 #define HOME_NOAH_DOCUMENTS_FOO_HASH_DICTIONARY_H
 
-#include "dictionary.h"
+#include "dictionary_interface.h"
 #include <unordered_map>
 #include <string>
 
