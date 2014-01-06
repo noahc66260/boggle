@@ -36,16 +36,16 @@ class HashDictionary : public DictionaryInterface
     HashDictionary();
     explicit HashDictionary(string file); 
     ~HashDictionary() {} 
-    bool isWord(string s);
-    bool isPrefix(string s);
-    int size();
+    bool isWord(const string& s) const;
+    bool isPrefix(const string& s) const;
+    int size() const;
   private:
     // Reads tokens from file and inserts into words_ and prefixes_
     void init(string file);
 
     // Validating the words before inserting speeds up the program by
     // a factor of 3, so I'm not sure I want to remove this just yet.
-    bool validWord(string word);
+    bool validWord(const string& word) const;
     // the "value" will always be the null byte
     unordered_map<string, char> words_;
     unordered_map<string, char> prefixes_;

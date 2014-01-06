@@ -49,7 +49,7 @@ int Trie::addWord(const string& s)
   }
 }
 
-int Trie::countWords(const string& s)
+int Trie::countWords(const string& s) const
 {
   if (s.empty()) {
     return words_;
@@ -65,7 +65,7 @@ int Trie::countWords(const string& s)
   }
 }
 
-int Trie::countPrefixes(const string &s)
+int Trie::countPrefixes(const string &s) const
 {
   if (s.empty()) {
     return prefixes_;
@@ -81,7 +81,7 @@ int Trie::countPrefixes(const string &s)
   }
 }
 
-int Trie::index(char c)
+int Trie::index(char c) const
 {
   size_t index = valid_characters_.find(c);
   if (index == string::npos)

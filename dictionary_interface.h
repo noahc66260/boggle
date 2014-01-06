@@ -12,9 +12,9 @@ class DictionaryInterface
 {
   public:
     virtual ~DictionaryInterface() {} 
-    virtual bool isWord(string s) = 0;
-    virtual bool isPrefix(string s) = 0;
-    virtual int size() = 0;
+    virtual bool isWord(const string& s) const = 0;
+    virtual bool isPrefix(const string& s) const = 0;
+    virtual int size() const = 0;
 };
 
 #endif // HOME_NOAH_DOCUMENTS_FOO_DICTIONARY_INTERFACE_H

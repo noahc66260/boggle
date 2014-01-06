@@ -14,8 +14,8 @@
 //  Time to initialize O(n k)
 //
 // This dictionary only considers valid input
-// tokens which only contain alphabetic characters. The dictionary
-// is not case sensitive.
+// tokens which only contain alphabetic characters. 
+// The dictionary is not case sensitive.
 
 #ifndef HOME_NOAH_DOCUMENTS_FOO_TRIE_DICTIONARY_H 
 #define HOME_NOAH_DOCUMENTS_FOO_TRIE_DICTIONARY_H
@@ -34,17 +34,18 @@ class TrieDictionary : public DictionaryInterface
     TrieDictionary();
     explicit TrieDictionary(const string& file);  
     ~TrieDictionary() {}
-    bool isWord(string s);
-    bool isPrefix(string s);
-    int size();
+    //bool isWord(string s);
+    //bool isPrefix(string s);
+    bool isWord(const string& s) const;
+    bool isPrefix(const string& s) const;
+    int size() const;
   private:
     void init(const string& file);
-    bool validWord(const string& s);
+    bool validWord(const string& s) const;
     void addWord(const string& s);
     Trie head_;
     int unique_words_;
 
-    // disallow copy and assign
     TrieDictionary(TrieDictionary & t) = delete;
     TrieDictionary& operator=(TrieDictionary & t) = delete;
 };

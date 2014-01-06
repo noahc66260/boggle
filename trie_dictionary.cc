@@ -1,47 +1,49 @@
 // trie_dictionary.cc
 //
-// maybe i should get rid of transform commands as it's not in the specs
 
 #include "trie_dictionary.h"
 #include "trie.h"
 #include <algorithm>
 #include <fstream>
 
-
-TrieDictionary::TrieDictionary()
+TrieDictionary::TrieDictionary() : head_('\0')
 {
   init("/usr/share/dict/words");
 }
 
-TrieDictionary::TrieDictionary(const string& file) 
+TrieDictionary::TrieDictionary(const string& file) : head_('\0')
 {
   init(file);
 }
 
-bool TrieDictionary::isWord(string s) 
+//bool TrieDictionary::isWord(string s) 
+bool TrieDictionary::isWord(const string& s) const
 {
-  std::transform(s.begin(), s.end(), s.begin(), ::tolower);
-  if (!validWord(s)) {
+  string t = s;
+  std::transform(t.begin(), t.end(), t.begin(), ::tolower);
+  if (!validWord(t)) {
     return false;
   } else {
-    return head_.countWords(s);
+    return head_.countWords(t);
   }
 }
 
-bool TrieDictionary::isPrefix(string s)
+//bool TrieDictionary::isPrefix(string s)
+bool TrieDictionary::isPrefix(const string& s) const 
 {
-  if (s.empty()) {
+  string t = s;
+  if (t.empty()) {
     return true;
   }
-  std::transform(s.begin(), s.end(), s.begin(), ::tolower);
-  if (!validWord(s)) {
+  std::transform(t.begin(), t.end(), t.begin(), ::tolower);
+  if (!validWord(t)) {
     return false;
   } else {
-    return head_.countPrefixes(s);
+    return head_.countPrefixes(t);
   }
 }
 
-int TrieDictionary::size()
+int TrieDictionary::size() const
 {
   return unique_words_;
 }
@@ -49,7 +51,7 @@ int TrieDictionary::size()
 void TrieDictionary::init(const string& file)
 {
   unique_words_ = 0;
-  head_ = Trie('\0'); 
+  //head_ = Trie('\0'); 
   std::ifstream ifs(file.c_str());
   string word;
 
@@ -64,7 +66,7 @@ void TrieDictionary::init(const string& file)
   ifs.close();
 }
 
-bool TrieDictionary::validWord(const string& s)
+bool TrieDictionary::validWord(const string& s) const
 {
   if (s.empty()) {
     return false;

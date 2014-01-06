@@ -22,10 +22,10 @@ class Trie
     explicit Trie(char c);
     ~Trie();
     int addWord(const string& s); // later make char * implementation
-    int countWords(const string& s);
-    int countPrefixes(const string& s);
+    int countWords(const string& s) const;
+    int countPrefixes(const string& s) const;
   private:
-    int index(char c);
+    int index(char c) const;
     char c_;
     int words_;
     int prefixes_;

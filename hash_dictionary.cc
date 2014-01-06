@@ -55,7 +55,7 @@ void HashDictionary::init(string file)
 // Using this function can speed up the init() function significantly
 // if the file we read from contains many words which do not
 // contain alphabetic characters.
-bool HashDictionary::validWord(string word)
+bool HashDictionary::validWord(const string& word) const
 {
   for (unsigned i = 0; i < word.length(); ++i) {
     if (!isalpha(word[i])) {
@@ -66,30 +66,30 @@ bool HashDictionary::validWord(string word)
 }
 
 // Returns true if s is in the dictionary (case insensitive).
-bool HashDictionary::isWord(string s)
+bool HashDictionary::isWord(const string& s) const
 {
   using std::transform;
-
-  transform(s.begin(), s.end(), s.begin(), ::tolower);
-  if (words_.count(s) != 0) {
+  string t = s;
+  transform(t.begin(), t.end(), t.begin(), ::tolower);
+  if (words_.count(t) != 0) {
       return true;
   }
   return false;
 }
 
 // Returns true if s is a prefix in the dictionary (case insensitive).
-bool HashDictionary::isPrefix(string s)
+bool HashDictionary::isPrefix(const string& s) const
 {
   using std::transform;
-
-  transform(s.begin(), s.end(), s.begin(), ::tolower);
-  if (prefixes_.count(s) != 0) {
+  string t = s;
+  transform(t.begin(), t.end(), t.begin(), ::tolower);
+  if (prefixes_.count(t) != 0) {
     return true;
   }
   return false;
 }
 
-int HashDictionary::size()
+int HashDictionary::size() const
 {
   return words_.size();
 }
