@@ -1,20 +1,14 @@
 // boggle_solver.cc
-//
-// Ok... so the next step is making boggle_solver such that it can deal with
-//  either a hash dictionary or a trie dictionary.
-// Then implement GNU getops
-// Then do robust testing
 
 #include "boggle_solver.h"
-#include <vector>
 #include <utility>
+#include <vector>
 
 void BoggleSolver::setDictionary(DictionaryInterface& dictionary)
 {
   pdictionary_ = &dictionary;
 }
 
-// no need for using directives since .h file has it
 set<string> BoggleSolver::solve(BoggleBoard& board)
 {
   using std::vector;
@@ -27,11 +21,11 @@ set<string> BoggleSolver::solve(BoggleBoard& board)
     vector< vector<bool> >(rows, vector<bool>(cols, false));
   set<string> solutions = set<string>();
 
-  string s = "";
+  string prefix = "";
   for (int i = 0; i < rows; ++i) {
     for (int j = 0; j < cols; ++j) {
       pair<int, int> indices = pair<int, int>(i, j);
-      dfs_boggle(board, indices, s, visited, &solutions);
+      dfs_boggle(board, indices, prefix, visited, &solutions);
     }
   }
   return solutions; 
@@ -43,10 +37,10 @@ bool BoggleSolver::valid_index(int rows, int cols, int i, int j)
 }
 
 void BoggleSolver::dfs_boggle(BoggleBoard& board, 
-                pair<int,int> indices,
-                string& prefix,
-                vector< vector<bool> >& visited,
-                set<string>* psolutions)
+                              pair<int,int> indices,
+                              string& prefix,
+                              vector< vector<bool> >& visited,
+                              set<string>* psolutions)
 {
   if (!pdictionary_->isPrefix(prefix))
     return;
@@ -70,7 +64,6 @@ void BoggleSolver::dfs_boggle(BoggleBoard& board,
       }
     }
   }
-  //prefix.pop_back(); // might be C++11 feature
   prefix = prefix.substr(0, prefix.length()-1);
   visited[i][j] = false;
 }
